@@ -14,6 +14,9 @@ class SignupPage extends StatelessWidget {
         color: Colors.white,
         child: ListView(
           children: <Widget>[
+             SizedBox(
+              height: 50,
+            ),
             TextFormField(
               // autofocus: true,
               keyboardType: TextInputType.text,
@@ -30,7 +33,7 @@ class SignupPage extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: 10,
+              height: 20,
             ),
             TextFormField(
               // autofocus: true,
@@ -48,7 +51,7 @@ class SignupPage extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: 10,
+              height: 20,
             ),
             TextFormField(
               // autofocus: true,
@@ -65,21 +68,13 @@ class SignupPage extends StatelessWidget {
               style: TextStyle(fontSize: 20),
             ),
             SizedBox(
-              height: 10,
+              height: 60,
             ),
             Container(
               height: 60,
               alignment: Alignment.centerLeft,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  stops: [0.3, 1],
-                  colors: [
-                    Color(0xFFF58524),
-                    Color(0XFFF92B7F),
-                  ],
-                ),
+                color: Color.fromARGB(255, 47, 47, 47),
                 borderRadius: BorderRadius.all(
                   Radius.circular(5),
                 ),

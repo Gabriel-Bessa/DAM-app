@@ -46,7 +46,12 @@ class BottomNavBar extends StatelessWidget {
               margin: const EdgeInsets.only(right: 50),
               child: IconButton(
                 onPressed: () {
-                  print('Tela de perfil inexistente');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LoginPage(),
+                    ),
+                  );
                 },
                 icon: const Icon(Icons.person),
               )),

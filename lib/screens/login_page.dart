@@ -2,6 +2,7 @@
 
 import 'package:noticias/screens/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:noticias/screens/screens.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -53,24 +54,24 @@ class LoginPage extends StatelessWidget {
               ),
               style: TextStyle(fontSize: 20),
             ),
-            Container(
-              height: 40,
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                child: Text(
-                  "Recuperar Senha",
-                  textAlign: TextAlign.right,
-                ),
-                onPressed: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) => ResetPasswordPage(),
-                  //   ),
-                  // );
-                },
-              ),
-            ),
+            // Container(
+            //   height: 40,
+            //   alignment: Alignment.centerRight,
+            //   child: TextButton(
+            //     child: Text(
+            //       "Recuperar Senha",
+            //       textAlign: TextAlign.right,
+            //     ),
+            //     onPressed: () {
+            //       // Navigator.push(
+            //       //   context,
+            //       //   MaterialPageRoute(
+            //       //     builder: (context) => ResetPasswordPage(),
+            //       //   ),
+            //       // );
+            //     },
+            //   ),
+            // ),
             SizedBox(
               height: 40,
             ),
@@ -78,42 +79,29 @@ class LoginPage extends StatelessWidget {
               height: 60,
               alignment: Alignment.centerLeft,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  stops: [0.3, 1],
-                  colors: [
-                    Color(0xFFF58524),
-                    Color(0XFFF92B7F),
-                  ],
-                ),
+                color: Color.fromARGB(255, 47, 47, 47),
                 borderRadius: BorderRadius.all(
                   Radius.circular(5),
                 ),
               ),
               child: SizedBox.expand(
                 child: TextButton(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        "Login",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 20,
-                        ),
-                        textAlign: TextAlign.center,
-                      )
-                    ],
+                  child: Text(
+                    "Login",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 20,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                   onPressed: () {
                     Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => HomeScreen(),
-                      ),
-                    );
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HomeScreen(),
+                    ),
+                  );
                   },
                 ),
               ),
@@ -129,12 +117,12 @@ class LoginPage extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 onPressed: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) => SignupPage(),
-                  //   ),
-                  // );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SignupPage(),
+                    ),
+                  );
                 },
               ),
             ),
