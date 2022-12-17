@@ -4,9 +4,14 @@ import 'package:noticias/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:noticias/screens/screens.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,12 +20,6 @@ class LoginPage extends StatelessWidget {
         color: Colors.white,
         child: ListView(
           children: <Widget>[
-            //Logo do app na tela de login
-            // SizedBox(
-            //   width: 128,
-            //   height: 128,
-            //   child: Image.asset("assets/logo.png"),
-            // ),
             SizedBox(
               height: 20,
             ),
@@ -54,24 +53,6 @@ class LoginPage extends StatelessWidget {
               ),
               style: TextStyle(fontSize: 20),
             ),
-            // Container(
-            //   height: 40,
-            //   alignment: Alignment.centerRight,
-            //   child: TextButton(
-            //     child: Text(
-            //       "Recuperar Senha",
-            //       textAlign: TextAlign.right,
-            //     ),
-            //     onPressed: () {
-            //       // Navigator.push(
-            //       //   context,
-            //       //   MaterialPageRoute(
-            //       //     builder: (context) => ResetPasswordPage(),
-            //       //   ),
-            //       // );
-            //     },
-            //   ),
-            // ),
             SizedBox(
               height: 40,
             ),
