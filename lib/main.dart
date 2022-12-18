@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'firebase_options.dart';
 import 'screens/screens.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.grey,
       ),
+      builder: EasyLoading.init(),
       initialRoute: '/',
       routes: {
         LoginPage.routeName: (context) => const LoginPage(),

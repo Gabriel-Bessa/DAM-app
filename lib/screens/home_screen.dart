@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:noticias/commons/firebase_collections.dart';
 import 'package:noticias/models/article_model.dart';
 import 'package:noticias/screens/article_screen.dart';
 import 'package:noticias/widgets/custom_tag.dart';
@@ -6,13 +9,35 @@ import 'package:noticias/widgets/custom_tag.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/image_container.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
-
   static const routeName = '/home';
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  List<Article> news = [];
+
+  FirebaseFirestore db = FirebaseFirestore.instance;
+
+  _loadNews() async {
+    List<Article> articles = [];
+    QuerySnapshot query = await db.collection(FirebaseCollections.news).limit(6).orderBy("createAt").get();
+    query.docs.forEach((element) {
+      Article article = new Article(id: "nothing", title: element.get("title"), subtitle: element.get("subtitle"), body: element.get("body"), author: element.get("author"), authorImageUrl: element.get("authorImageUrl"), category: element.get("category"), imageUrl: element.get("imageUrl"), views: element.get("views"), createAt: DateTime.parse(element.get("createAt")));
+      articles.add(article);
+    });
+    EasyLoading.dismiss();
+    setState(() {
+      news = articles;
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    Article article = Article.articles[0];
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -30,12 +55,20 @@ class HomeScreen extends StatelessWidget {
       body: ListView(
         padding: EdgeInsets.zero,
         children: [
-          _NewsOfTheDay(article: article),
-          _BreakingNews(articles: Article.articles),
+          news.isNotEmpty ? _NewsOfTheDay(article: news[0]) : Container(),
+          _BreakingNews(articles: news),
         ],
       ),
     );
   }
+
+  @override
+  initState() {
+    super.initState();
+    EasyLoading.show(status: 'loading...');
+    _loadNews();
+  }
+
 }
 
 class _BreakingNews extends StatelessWidget {
