@@ -1,10 +1,63 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
+import 'package:noticias/commons/firebase_collections.dart';
 import 'package:noticias/screens/login_page.dart';
+import 'package:uuid/uuid.dart';
 
-class SignupPage extends StatelessWidget {
+import '../commons/alert_helper.dart';
+
+class SignupPage extends StatefulWidget {
+
+
   const SignupPage({super.key});
+
+  @override
+  State<SignupPage> createState() => _SignupPageState();
+}
+
+class _SignupPageState extends State<SignupPage> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final nameController = TextEditingController();
+  FirebaseFirestore db = FirebaseFirestore.instance;
+
+  makeSignUp() async {
+    bool valid = _validaSigUpForm();
+    if (!valid) {
+      var uuid = Uuid();
+      db.collection(FirebaseCollections.user).doc(uuid.v1()).set({
+        "name": nameController.text,
+        "password": passwordController.text,
+        "email": emailController.text,
+      });
+      MenssageHelper.successMenssage("Seja bem vindo(a) ${nameController.text}", context, () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LoginPage(),
+          ),
+        );
+      });
+    }
+  }
+
+  bool _validaSigUpForm() {
+    if(emailController.text.length < 5) {
+      MenssageHelper.errorMenssage("O email deve possuir pelo menos 5 caracteres", context);
+      return true;
+    }
+    if(passwordController.text.length < 5) {
+      MenssageHelper.errorMenssage("A senha deve possuir pelo menos 5 caracteres", context);
+      return true;
+    }
+    if(nameController.text.length < 5) {
+      MenssageHelper.errorMenssage("O nome deve possuir pelo menos 5 caracteres", context);
+      return true;
+    }
+    return false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +81,7 @@ class SignupPage extends StatelessWidget {
                   fontSize: 20,
                 ),
               ),
+              controller: nameController,
               style: TextStyle(
                 fontSize: 20,
               ),
@@ -37,6 +91,7 @@ class SignupPage extends StatelessWidget {
             ),
             TextFormField(
               // autofocus: true,
+              controller: emailController,
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
                 labelText: "E-mail",
@@ -57,6 +112,7 @@ class SignupPage extends StatelessWidget {
               // autofocus: true,
               keyboardType: TextInputType.text,
               obscureText: true,
+              controller: passwordController,
               decoration: InputDecoration(
                 labelText: "Senha",
                 labelStyle: TextStyle(
@@ -91,12 +147,7 @@ class SignupPage extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                   onPressed: () {
-                    Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LoginPage(),
-                    ),
-                  );
+                    makeSignUp();
                   },
                 ),
               ),
