@@ -1,7 +1,6 @@
-// ignore_for_file: avoid_print
-
 import 'package:flutter/material.dart';
 import 'package:noticias/screens/screens.dart';
+import '../screens/login_page.dart';
 
 class BottomNavBar extends StatelessWidget {
   const BottomNavBar({
@@ -61,3 +60,4 @@ class BottomNavBar extends StatelessWidget {
     );
   }
 }
+

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "692634050204",
+    "project_id": "dam-app-2bdaf",
+    "storage_bucket": "dam-app-2bdaf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:692634050204:android:65f6c5c9c5b7f3b17e9759",
+        "android_client_info": {
+          "package_name": "com.example.noticias"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "692634050204-8rih082a7es3l1jemhh23qknj3necdo8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4eddq-eF62UB4DvWLmFk0NCC06uirojw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "692634050204-8rih082a7es3l1jemhh23qknj3necdo8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

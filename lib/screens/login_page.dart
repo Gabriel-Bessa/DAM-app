@@ -1,10 +1,13 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace
-
-import 'package:noticias/screens/home_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:noticias/screens/screens.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import '../commons/alert_helper.dart';
+import '../commons/firebase_collections.dart';
+import 'home_screen.dart';
+import 'signup_page.dart';
 
 class LoginPage extends StatefulWidget {
+  static const routeName = '/';
   const LoginPage({super.key});
 
   @override
@@ -12,6 +15,44 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  FirebaseFirestore db = FirebaseFirestore.instance;
+
+  bool _validateLoginValues() {
+    if(emailController.text.length < 5) {
+      MenssageHelper.errorMenssage("o email deve possuir pelo menos 5 caracteres", context);
+      return true;
+    }
+    if(passwordController.text.length < 5) {
+      MenssageHelper.errorMenssage("a senha deve possuir pelo menos 5 caracteres", context);
+      return true;
+    }
+    return false;
+  }
+
+  makeLogin() async {
+    bool isInvalid = _validateLoginValues();
+    if(!isInvalid) {
+      var user;
+      QuerySnapshot query = await db.collection(FirebaseCollections.user).where("email", isEqualTo: emailController.text).where("password", isEqualTo: passwordController.text).limit(1).get();
+      if(query.docs.isEmpty) {
+        MenssageHelper.errorMenssage("Usuário não encontrado! Tente outra combinação de email e senha", context);
+        return;
+      }
+      for (var value in query.docs ) {
+        MenssageHelper.successMenssage("Olá ${value.get("name")} seja bem vindo(a)!", context, () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomeScreen(),
+            ),
+          );
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,6 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               style: TextStyle(fontSize: 20),
+              controller: emailController
             ),
             SizedBox(
               height: 10,
@@ -52,6 +94,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               style: TextStyle(fontSize: 20),
+              controller: passwordController,
             ),
             SizedBox(
               height: 40,
@@ -77,12 +120,7 @@ class _LoginPageState extends State<LoginPage> {
                     textAlign: TextAlign.center,
                   ),
                   onPressed: () {
-                    Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HomeScreen(),
-                    ),
-                  );
+                    makeLogin();
                   },
                 ),
               ),
