@@ -259,7 +259,6 @@ class _DiscoverNews extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           TextFormField(
-            controller: ter,
             decoration: InputDecoration(
               hintText: 'Search',
               fillColor: Colors.grey.shade200,
