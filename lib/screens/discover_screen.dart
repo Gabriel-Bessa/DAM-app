@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:noticias/screens/article_screen.dart';
 import 'package:noticias/widgets/image_container.dart';
 
+import '../commons/firebase_collections.dart';
 import '../models/article_model.dart';
 import '../widgets/bottom_nav_bar.dart';
 
@@ -9,9 +12,10 @@ class DiscoverScreen extends StatelessWidget {
   const DiscoverScreen({super.key});
 
   static const routeName = '/discover';
+
   @override
   Widget build(BuildContext context) {
-    List<String> tabs = ['Health', 'Politics', 'Art', 'Food', 'Science'];
+    List<String> tabs = ['Saúde', 'Política', 'Arte', 'Comida', 'Ciência'];
 
     return DefaultTabController(
       initialIndex: 0,
@@ -38,23 +42,93 @@ class DiscoverScreen extends StatelessWidget {
   }
 }
 
-class _CategoryNews extends StatelessWidget {
-  const _CategoryNews({
-    Key? key,
-    required this.tabs,
-  }) : super(key: key);
+class _CategoryNews extends StatefulWidget {
+  _CategoryNews({Key? key, required this.tabs}) : super(key: key);
 
   final List<String> tabs;
 
   @override
+  State<_CategoryNews> createState() => _CategoryNewsState();
+}
+
+class _CategoryNewsState extends State<_CategoryNews> {
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  List<Article> news = [];
+
+  _loadNews() async {
+    List<Article> articles = [];
+    QuerySnapshot query = await db
+        .collection(FirebaseCollections.news)
+        .where("category", isEqualTo: this.widget.tabs[0])
+        .limit(6)
+        .get();
+    query.docs.forEach((element) {
+      Article article = new Article(
+          id: "nothing",
+          title: element.get("title"),
+          subtitle: element.get("subtitle"),
+          body: element.get("body"),
+          author: element.get("author"),
+          authorImageUrl: element.get("authorImageUrl"),
+          category: element.get("category"),
+          imageUrl: element.get("imageUrl"),
+          views: element.get("views"),
+          createAt: DateTime.parse(element.get("createAt")));
+      articles.add(article);
+    });
+    EasyLoading.dismiss();
+    setState(() {
+      news = articles;
+    });
+  }
+
+  _filterByCategory(int value) async {
+    List<Article> articles = [];
+    QuerySnapshot query = await db
+        .collection(FirebaseCollections.news)
+        .where("category", isEqualTo: this.widget.tabs[value])
+        .limit(6)
+        .get();
+    query.docs.forEach((element) {
+      Article article = new Article(
+          id: "nothing",
+          title: element.get("title"),
+          subtitle: element.get("subtitle"),
+          body: element.get("body"),
+          author: element.get("author"),
+          authorImageUrl: element.get("authorImageUrl"),
+          category: element.get("category"),
+          imageUrl: element.get("imageUrl"),
+          views: element.get("views"),
+          createAt: DateTime.parse(element.get("createAt")));
+      articles.add(article);
+    });
+    EasyLoading.dismiss();
+    setState(() {
+      news = articles;
+    });
+  }
+
+  _serchByTerm() async {
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    EasyLoading.show(status: 'loading...');
+    _loadNews();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final articles = Article.articles;
     return Column(
       children: [
         TabBar(
           isScrollable: true,
           indicatorColor: Colors.black,
-          tabs: tabs
+          onTap: (value) => {_filterByCategory(value)},
+          tabs: widget.tabs
               .map(
                 (tab) => Tab(
                   icon: Text(
@@ -68,84 +142,91 @@ class _CategoryNews extends StatelessWidget {
               )
               .toList(),
         ),
-        SizedBox(
-          height: MediaQuery.of(context).size.height,
-          child: TabBarView(
-              children: tabs
-                  .map((tab) => ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: articles.length,
-                        itemBuilder: ((context, index) {
-                          return InkWell(
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                ArticleScreen.routeName,
-                                arguments: articles[index],
-                              );
-                            },
-                            child: Row(
-                              children: [
-                                ImageContainer(
-                                  width: 80,
-                                  height: 80,
-                                  margin: const EdgeInsets.all(10.0),
-                                  borderRadius: 5,
-                                  imageUrl: articles[index].imageUrl,
-                                ),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
+        news.isEmpty
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [Text("Nada encontrado!")],
+              )
+            : SizedBox(
+                height: MediaQuery.of(context).size.height,
+                child: TabBarView(
+                    children: widget.tabs
+                        .map((tab) => ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: news.length,
+                              itemBuilder: ((context, index) {
+                                return InkWell(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      ArticleScreen.routeName,
+                                      arguments: news[index],
+                                    );
+                                  },
+                                  child: Row(
                                     children: [
-                                      Text(
-                                        articles[index].title,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.clip,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge!
-                                            .copyWith(
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                      ImageContainer(
+                                        width: 80,
+                                        height: 80,
+                                        margin: const EdgeInsets.all(10.0),
+                                        borderRadius: 5,
+                                        imageUrl: news[index].imageUrl,
                                       ),
-                                      const SizedBox(height: 10),
-                                      Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.schedule,
-                                            size: 18,
-                                          ),
-                                          const SizedBox(width: 5),
-                                          Text(
-                                            '${DateTime.now().difference(articles[index].createAt).inHours} horas atrás',
-                                            style:
-                                                const TextStyle(fontSize: 12),
-                                          ),
-                                          const SizedBox(width: 20),
-                                          const Icon(
-                                            Icons.visibility,
-                                            size: 18,
-                                          ),
-                                          const SizedBox(width: 5),
-                                          Text(
-                                            '${articles[index].views} views',
-                                            style:
-                                                const TextStyle(fontSize: 12),
-                                          )
-                                        ],
-                                      )
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              news[index].title,
+                                              maxLines: 2,
+                                              overflow: TextOverflow.clip,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge!
+                                                  .copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                            ),
+                                            const SizedBox(height: 10),
+                                            Row(
+                                              children: [
+                                                const Icon(
+                                                  Icons.schedule,
+                                                  size: 18,
+                                                ),
+                                                const SizedBox(width: 5),
+                                                Text(
+                                                  '${DateTime.now().difference(news[index].createAt).inHours} horas atrás',
+                                                  style: const TextStyle(
+                                                      fontSize: 12),
+                                                ),
+                                                const SizedBox(width: 20),
+                                                const Icon(
+                                                  Icons.visibility,
+                                                  size: 18,
+                                                ),
+                                                const SizedBox(width: 5),
+                                                Text(
+                                                  '${news[index].views} views',
+                                                  style: const TextStyle(
+                                                      fontSize: 12),
+                                                )
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ),
                                     ],
                                   ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }),
-                      ))
-                  .toList()),
-        )
+                                );
+                              }),
+                            ))
+                        .toList()),
+              )
       ],
     );
   }
@@ -178,6 +259,7 @@ class _DiscoverNews extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           TextFormField(
+            controller: ter,
             decoration: InputDecoration(
               hintText: 'Search',
               fillColor: Colors.grey.shade200,
